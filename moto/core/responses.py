@@ -1,3 +1,4 @@
+import os
 import functools
 from collections import defaultdict
 import datetime
@@ -145,7 +146,7 @@ class ActionAuthenticatorMixin(object):
             def wrapper(*args, **kwargs):
                 if settings.TEST_SERVER_MODE:
                     response = requests.post(
-                        "http://localhost:5000/moto-api/reset-auth",
+                        os.environ.get("MOTO_SERVER_URL", "http://localhost:5000") + "/moto-api/reset-auth",
                         data=str(initial_no_auth_action_count).encode("utf-8"),
                     )
                     original_initial_no_auth_action_count = response.json()[
@@ -163,7 +164,7 @@ class ActionAuthenticatorMixin(object):
                 finally:
                     if settings.TEST_SERVER_MODE:
                         requests.post(
-                            "http://localhost:5000/moto-api/reset-auth",
+                            os.environ.get("MOTO_SERVER_URL", "http://localhost:5000") + "/moto-api/reset-auth",
                             data=str(original_initial_no_auth_action_count).encode(
                                 "utf-8"
                             ),
